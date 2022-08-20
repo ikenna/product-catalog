@@ -44,8 +44,8 @@ jobs:
         id: test_breaking_changes
         uses: Tufin/oasdiff-action@v2
         with:
-          base: 'base/api-definitions/skeleton-api.oas.yaml'
-          revision: 'revision/api-definitions/skeleton-api.oas.yaml'
+          base: 'base/api-definitions/product-catalog-api.oas.yaml'
+          revision: 'revision/api-definitions/product-catalog-api.oas.yaml'
           format: 'yaml'
           breaking-only: true
           fail-on-diff: true

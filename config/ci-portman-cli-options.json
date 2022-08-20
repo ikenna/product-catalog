@@ -1,5 +1,5 @@
 {
-  "local": "./api-definitions/bundled-skeleton-api.oas.yaml",
+  "local": "./api-definitions/bundled-product-catalog-api.oas.yaml",
   "output": "./output/postman.collection.json",
   "portmanConfigFile": "./config/ci-portman-config.json",
   "postmanConfigFile": "./config/ci-postman-config.json",

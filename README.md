@@ -1,3 +1,3 @@
 # Acme Starter API definiton project
 
-A skeleton OpenAPI definition project.
+A product-catalog OpenAPI definition project.
