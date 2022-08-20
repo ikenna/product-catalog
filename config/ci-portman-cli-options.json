@@ -1,0 +1,8 @@
+{
+  "local": "./api-definitions/bundled-skeleton-api.oas.yaml",
+  "output": "./output/postman.collection.json",
+  "portmanConfigFile": "./config/ci-portman-config.json",
+  "postmanConfigFile": "./config/ci-postman-config.json",
+  "syncPostman": false,
+  "runNewman": false
+}

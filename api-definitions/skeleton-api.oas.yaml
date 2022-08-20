@@ -1,0 +1,142 @@
+openapi: 3.0.0
+info:
+  title: TODO - API title
+  description: Todo
+  contact:
+    name: Acme Pet Supplies
+    url: "https://AcmePetSupplies.com"
+    email: john.smith@acme-pet-supplies.com
+  version: "1.0"
+servers:
+  - url: "https://localhost:8000"
+tags:
+  - name: TODO Tag
+    description: Replace with your tag
+  - name: System Health
+    description: Health status of the API
+paths:
+  /v1/todo:
+    get:
+      tags:
+        - TODO Tag
+      summary: TODO
+      operationId: todo
+      description: "Todo"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  todo:
+                    type: string
+                    pattern: ^[-#\/\w\s\.\"\'\d]+$
+                    minLength: 1
+                    maxLength: 100
+                    description: "A todo"
+                    example: "Replace me"
+
+        "404":
+          $ref: "shared/responses/404Response.yaml"
+        "401":
+          $ref: "shared/responses/401Response.yaml"
+        "403":
+          $ref: "shared/responses/403Response.yaml"
+        
+  /v1/health:
+    get:
+      tags:
+        - System Health
+      summary: Health endpoint
+      operationId: health
+      description: Health endpoint.
+      responses:
+        "200":
+          description: Pass or warn response
+          content:
+            application/health+json:
+              schema:
+                $ref: "#/components/schemas/HealthyService"
+              examples:
+                Pass:
+                  value:
+                    healthStatus: pass
+                    description: Service is operational
+                Warn:
+                  value:
+                    healthStatus: warn
+                    description: Service is running with degraded performance
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthyService"
+        "401":
+          $ref: "shared/responses/401Response.yaml"
+        "403":
+          $ref: "shared/responses/403Response.yaml"
+        "503":
+          description: Fail response
+          content:
+            application/health+json:
+              schema:
+                $ref: "#/components/schemas/UnhealthyService"
+              examples:
+                Fail:
+                  value:
+                    healthStatus: fail
+                    description: Service failure
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnhealthyService"
+components:
+  schemas:
+    HealthyService:
+      title: Health
+      type: object
+      additionalProperties: false
+      properties:
+        healthStatus:
+          enum:
+            - pass
+            - warn
+          example: pass
+          type: string
+          description: Indicates whether the service status is acceptable or not.
+        description:
+          type: string
+          description: Human-friendly description of the service.
+          pattern: ^[-#\/\w\s\.\"\'\d]+$
+          minLength: 1
+          maxLength: 100
+          example: Health of service
+      required:
+        - healthStatus
+    UnhealthyService:
+      title: Health
+      type: object
+      additionalProperties: false
+      properties:
+        healthStatus:
+          enum:
+            - fail
+          example: fail
+          type: string
+          description: Indicates whether the service status is acceptable or not.
+        description:
+          type: string
+          description: Human-friendly description of the service.
+          pattern: ^[-#\/\w\s\.\"\'\d]+$
+          minLength: 1
+          maxLength: 100
+      required:
+        - healthStatus
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: X-API-Key
+      in: header
+
+security:
+  - apiKey: []

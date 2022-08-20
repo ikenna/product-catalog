@@ -1,0 +1,11 @@
+description: Forbidden
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/Problem.yaml
+    example:
+      type: /problems/forbidden
+      title: Forbidden
+      status: 403
+      detail: Access to this resource is forbidden. Please check you are authorized to access this resource.
+      instance: /problems/forbidden#log-22ce59a8-f263-4164-8d6d-18952a940748

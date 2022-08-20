@@ -1,0 +1,11 @@
+description: Not authorized
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/Problem.yaml
+    example:
+      type: /problems/not-authorized
+      title: Not authorized
+      status: 401
+      detail: Authentication failure. 
+      instance: /problems/not-authorized#log-22ce59a8-f263-4164-8d6d-18952a940748

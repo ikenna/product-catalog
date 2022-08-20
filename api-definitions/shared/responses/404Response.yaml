@@ -1,0 +1,11 @@
+description: Not Found
+content:
+  application/json:
+    schema:
+      $ref: ../schemas/Problem.yaml
+    example:
+      type: /problems/forbidden
+      title: Not Found
+      status: 404
+      detail: Resource not found.
+      instance: /problems/not-found#log-22ce59a8-f263-4164-8d6d-18952a940748

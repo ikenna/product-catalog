@@ -1,0 +1,6 @@
+audit:
+  branches:
+    main:
+      mapping:
+        skeleton-api.oas.yaml: 02d4b7d5-f11b-4e92-847b-0e320b3a0c7d
+      discovery: false

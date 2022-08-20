@@ -1,0 +1,101 @@
+name: Commit Stage Pull Request Workflow
+
+on: 
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  checks: write
+
+jobs:
+  commit-stage-open-api-lint:
+    name: Lint Open API
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout out pr branch
+        uses: actions/checkout@v3
+      - name: View working folder
+        run:  tree
+      - name: "Run API linting (with Spectral)"
+        uses: stoplightio/spectral-action@latest
+        with:
+          file_glob: 'api-definitions/*.oas.yaml'
+          spectral_ruleset: '.spectral.yaml'
+
+  commit-stage-breaking-change-check:
+    name: Breaking Change Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout out pr branch
+        uses: actions/checkout@v3
+        with:
+          path: revision
+      - name: Check out main branch
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          path: base
+      - name: View working folder
+        run: |
+          ls -lash
+          tree
+      - name: Running OpenAPI Spec diff action (Tufin/oasdiff)
+        id: test_breaking_changes
+        uses: Tufin/oasdiff-action@v2
+        with:
+          base: 'base/api-definitions/skeleton-api.oas.yaml'
+          revision: 'revision/api-definitions/skeleton-api.oas.yaml'
+          format: 'yaml'
+          breaking-only: true
+          fail-on-diff: true
+
+  commit-stage-security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout out pr branch
+        uses: actions/checkout@v3
+      - name: View working folder
+        run:  tree
+      - name: "Run OpenAPI security audit"
+        uses: 42Crunch/api-security-audit-action@v3
+        with:
+          api-token: ${{ secrets.CRUNCH_API_TOKEN }}
+          min-score: 75
+          default-collection-name: api-starter
+          log-level: DEBUG
+          root-directory: api-definitions
+
+
+  commit-stage-lint-markdown:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: View all files
+        run: tree
+      - name: Lint using Super Linter
+        uses: github/super-linter/slim@v4
+        env:
+          DEFAULT_BRANCH: main
+          VALIDATE_MARKDOWN: true
+          VALIDATE_ALL_CODEBASE: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+  commit-stage-lint-guide-docs:
+    name: Lint guide documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Lint guide docs
+        uses: errata-ai/vale-action@reviewdog
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: '["docs"]'
+          

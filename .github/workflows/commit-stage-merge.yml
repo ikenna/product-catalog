@@ -1,0 +1,51 @@
+name: Commit Stage Merge Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  run_number: ${GITHUB_RUN_NUMBER}
+
+permissions:
+  checks: write
+
+jobs:
+  commit-stage-api-definition-release-candidate:
+    name: Commit Stage API definition release candidate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout out pr branch
+        uses: actions/checkout@v3
+      - name: Run API linting (with Spectral)
+        uses: stoplightio/spectral-action@latest
+        with:
+          file_glob: "api-definitions/*.oas.yaml"
+          spectral_ruleset: ".spectral.yaml"
+      - name: Install Redocly CLI
+        run: |
+          npm list @redocly/cli@latest || npm i -g @redocly/cli@latest
+      - name: Bundle the API definition
+        run : redocly bundle api-definitions/skeleton-api.oas.yaml --output api-definitions/bundled-skeleton-api.oas.yaml
+      - name: Install Portman
+        run: |
+          npm list @apideck/portman || npm install -g @apideck/portman
+      - name: Generate Postman collections for external consumers
+        run: |
+          portman --cliOptionsFile config/ci-portman-cli-options.json
+
+      #TODO: Replace with GitHub packages
+      # - name: "Zip API definition, Postman collection"
+      #   run: |
+      #     zip artifacts.zip api-definitions/skeleton-api.oas.yaml output/postman.collection.json
+      
+      # - name: "Setup artifact repository CLI (Jfrog CLI)"
+      #   uses: jfrog/setup-jfrog-cli@v2
+      #   env:
+      #     JF_ENV_1: ${{ secrets.JF_SECRET }}
+      # - name: "Upload to artifact repository (Jfrog Artifactory)"
+      #   run: |
+      #     jf rt ping
+      #     jf rt upload artifacts.zip default-api-generic-local/com.acmeps/skeleton-api/artifacts.${{ env.run_number }}.zip
+          
